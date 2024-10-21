@@ -45,7 +45,6 @@ contract ProposalVote {
 
         emit ProposalCreated(_name, _quorum);
     }
-    
 
     function voteOnProposal(uint8 _index) external {
         require(msg.sender != address(0), "Zero Address is not allowed");
@@ -64,7 +63,7 @@ contract ProposalVote {
         currentProposal.voteCount += 1;
         currentProposal.voters.push(msg.sender);
         currentProposal.status = PropStatus.Pending;
-         hasVoted[msg.sender][_index] = true;
+        hasVoted[msg.sender][_index] = true;
 
         if (currentProposal.voteCount >= currentProposal.quorum) {
             currentProposal.status = PropStatus.Accepted;
@@ -74,8 +73,6 @@ contract ProposalVote {
                 currentProposal.voteCount
             );
         } else {
-           
-
             emit ProposalActive(
                 currentProposal.name,
                 currentProposal.voteCount
@@ -83,26 +80,34 @@ contract ProposalVote {
         }
     }
 
-    function getAllProposals() external view returns(Proposal[] memory) {
+    function getAllProposals() external view returns (Proposal[] memory) {
         return proposals;
     }
 
-    function getProposal(uint8 _index) external view returns(  string memory name_,
-        string memory desc_,
-        uint16 count_,
-        address[] memory voters_,
-        uint16 quorum_, PropStatus status_) {
+    function getProposal(
+        uint8 _index
+    )
+        external
+        view
+        returns (
+            string memory name_,
+            string memory desc_,
+            uint16 count_,
+            address[] memory voters_,
+            uint16 quorum_,
+            PropStatus status_
+        )
+    {
+        require(msg.sender != address(0), "Zero Address is not Allowed");
 
-         require(msg.sender != address(0), "Zero Address is not Allowed");
+        require(_index < proposals.length, "Index is out of bound");
 
-         require(_index < proposals.length, "Index is out of bound");
-
-         Proposal memory currentProposal = proposals[_index];
-         name_ = currentProposal.name;
-         desc_ = currentProposal.description;
-         count_ = currentProposal.voteCount;
-         voters_ = currentProposal.voters;
-         quorum_ = currentProposal.quorum;
-         status_ = currentProposal.status;
-        }
+        Proposal memory currentProposal = proposals[_index];
+        name_ = currentProposal.name;
+        desc_ = currentProposal.description;
+        count_ = currentProposal.voteCount;
+        voters_ = currentProposal.voters;
+        quorum_ = currentProposal.quorum;
+        status_ = currentProposal.status;
+    }
 }
